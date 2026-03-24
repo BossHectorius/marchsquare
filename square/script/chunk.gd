@@ -1,7 +1,7 @@
 extends Node2D
 class_name Chunk
 
-@export var size: Vector2 = Vector2(8, 8)
+@export var size: Vector2 = Vector2(16, 16)
 @export var res: Vector2 = Vector2(16, 16)
 
 var points: Array[Array]= []
@@ -15,12 +15,11 @@ func _generate_chunk(noise: FastNoiseLite, noise_offset: Vector2 = Vector2(0, 0)
 			value = smoothstep(0, 0, value)
 			points[x].append([])
 			points[x][y] = Vector4(x * res.x, y * res.y, value, 0)
-	_generate_shape(points)
 	draw.emit()
 
 func _generate_shape(plist: Array) -> void:
-	for x in range(0, size.x - 1):
-		for y in range(0, size.y - 1):
+	for x in range(0, plist.size() -1):
+		for y in range(0, plist.size() - 1):
 			var a: Vector4 = plist[x][y]
 			var b: Vector4 = plist[x + 1][y]
 			var c: Vector4 = plist[x + 1][y + 1]
