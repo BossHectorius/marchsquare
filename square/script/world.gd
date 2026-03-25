@@ -9,8 +9,8 @@ var chunks: Dictionary
 
 func _ready() -> void:
 	var noise := FastNoiseLite.new()
-	noise.seed = randi()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
+	noise.seed = randi()
 	_generate_start(noise)
 
 

@@ -8,8 +8,8 @@ var first_row: Array
 var right_neigh: Chunk
 var down_neigh: Chunk
 var diag_neigh: Chunk
-var points: Array[Array]= []
-
+var points: Array[Array]
+var last_row: Array
 
 
 func _generate_chunk(noise: FastNoiseLite, noise_offset: Vector2 = Vector2(0, 0),) -> void:
@@ -18,9 +18,11 @@ func _generate_chunk(noise: FastNoiseLite, noise_offset: Vector2 = Vector2(0, 0)
 		for y in size.y:
 			var value := noise.get_noise_2d(x + noise_offset.x, y + noise_offset.y)
 			value = smoothstep(0, 0, value)
-			points[x].append([])
-			points[x][y] = Vector4(x * res.x, y * res.y, value, 0)
-	first_row.append(points.front())
+			points[x].append(Vector4(x * res.x, y * res.y, value, 0))
+			if x==0:
+				first_row.append(Vector4(x * res.x, y * res.y, value, 0))
+			elif x == size.x:
+				last_row.append(Vector4(x * res.x, y * res.y, value, 0))
 	draw.emit()
 
 class Cell:
@@ -39,22 +41,37 @@ class Cell:
 		self.edges["d"] = d
 
 func _generate_shape() -> void:
-	if right_neigh:
-		points.append_array(right_neigh.first_row)
-	if down_neigh:
-		for X in range(0, down_neigh.points.size()):
-			points[X].append(down_neigh.points[X][down_neigh.points[X].size() - 1])
-	if diag_neigh:
-		points[17].append(diag_neigh.points.front().front())
-	for x in range(0, points.size()):
-		for y in range(0, points[x].size()):
+	#if right_neigh:
+		#points.append(right_neigh.first_row)
+	#if down_neigh:
+		#for X in range(0, down_neigh.points.size()):
+			#points[X].append(down_neigh.points[X][down_neigh.points[X].size() - 1])
+	#if diag_neigh:
+		#points[points.bsearch(points.back())].append(diag_neigh.points.front().front())
+	for x in range(points.size() - 1):
+		for y in range(points[x].size() - 1):
 			var a: Vector4 = points[x][y]
 			var b: Vector4 = points[x + 1][y]
 			var c: Vector4 = points[x + 1][y + 1]
 			var d: Vector4 = points[x][y + 1]
 			triangulate(Cell.new(a, b, c, d))
+	if right_neigh:
+		triangulate_gap_column(right_neigh.first_row)
 
-
+func triangulate_gap_row(row: Array) -> void:
+	pass
+func triangulate_gap_column(column: Array) -> void:
+	for y in range(0, len(column) - 1):
+		#TODO: fix the positions. The first row from the adyacent chunk is in that chunk's local position, which gives a ton of errors.
+		#So, turn it into global position and then into this chunk's local position
+		var a: Vector4 = last_row[y]
+		var b: Vector4 = column[y]
+		var c: Vector4 = column[y + 1]
+		var d: Vector4 = last_row[y + 1]
+		b.x += res.x
+		c.x += res.x
+		print("this cell is at %s %s %s %s" % [a, b, c, d])
+		triangulate(Cell.new(a, b, c, d))
 
 func _to_base10(a: int, b: int, c: int, d: int) -> int:
 	return a * 8 + b * 4 + c * 2 + d * 1
