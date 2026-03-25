@@ -4,18 +4,18 @@ class_name Chunk
 @export var size: Vector2 = Vector2(16, 16)
 @export var res: Vector2 = Vector2(16, 16)
 
-var first_row: Array
+var first_row: Array = []
 var right_neigh: Chunk
 var down_neigh: Chunk
 var diag_neigh: Chunk
 var points: Array[Array]
-var last_row: Array
+var last_row: Array = []
 
 
 func _generate_chunk(noise: FastNoiseLite, noise_offset: Vector2 = Vector2(0, 0),) -> void:
-	for x in size.x:
+	for x in range(size.x):
 		points.append([])
-		for y in size.y:
+		for y in range(size.y):
 			var value := noise.get_noise_2d(x + noise_offset.x, y + noise_offset.y)
 			value = smoothstep(0, 0, value)
 			points[x].append(Vector4(x * res.x, y * res.y, value, 0))
