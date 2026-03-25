@@ -21,7 +21,7 @@ func _generate_chunk(noise: FastNoiseLite, noise_offset: Vector2 = Vector2(0, 0)
 			points[x].append(Vector4(x * res.x, y * res.y, value, 0))
 			if x==0:
 				first_row.append(Vector4(x * res.x, y * res.y, value, 0))
-			elif x == size.x:
+			elif x == size.x - 1:
 				last_row.append(Vector4(x * res.x, y * res.y, value, 0))
 	draw.emit()
 
@@ -68,8 +68,8 @@ func triangulate_gap_column(column: Array) -> void:
 		var b: Vector4 = column[y]
 		var c: Vector4 = column[y + 1]
 		var d: Vector4 = last_row[y + 1]
-		b.x += res.x
-		c.x += res.x
+		b.x += res.x + a.x
+		c.x += res.x + a.x
 		print("this cell is at %s %s %s %s" % [a, b, c, d])
 		triangulate(Cell.new(a, b, c, d))
 
