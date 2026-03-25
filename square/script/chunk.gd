@@ -58,12 +58,17 @@ func _generate_shape() -> void:
 	if right_neigh:
 		triangulate_gap_column(right_neigh.first_row)
 
+#TODO: fix the positions. The first row from the adyacent chunk is in that chunk's local position, which gives a ton of errors.
+#So, turn it into global position and then into this chunk's local position
 func triangulate_gap_row(row: Array) -> void:
-	pass
+	for x in range(0, len(row) - 1):
+		var a: Vector4 
+		var b: Vector4
+		var c: Vector4 
+		var d: Vector4 
+
 func triangulate_gap_column(column: Array) -> void:
 	for y in range(0, len(column) - 1):
-		#TODO: fix the positions. The first row from the adyacent chunk is in that chunk's local position, which gives a ton of errors.
-		#So, turn it into global position and then into this chunk's local position
 		var a: Vector4 = last_row[y]
 		var b: Vector4 = column[y]
 		var c: Vector4 = column[y + 1]
