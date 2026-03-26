@@ -4,12 +4,17 @@ class_name WorldManager
 var chunks: Dictionary
 @export_category("World size")
 @export var wsize: Vector2 = Vector2(8, 8)
-@export var chunk_size: Vector2
+@export var chunk_size: Vector2 = Vector2(256, 256)
+
+#TODO: first, I need to make this properly
+#Secondly, I need to make it so that it generates chunks as the player moves along and removes the unnecesary ones.
 
 
 func _ready() -> void:
 	var noise := FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
+	noise.frequency = 0.0321
+	noise.fractal_octaves = 8
 	noise.seed = randi()
 	_generate_start(noise)
 
@@ -21,9 +26,9 @@ func _generate_start(noise: FastNoiseLite) -> void:
 	for x in range(0, wsize.x):
 		for y in range(0, wsize.y):
 			var chunk := Chunk.new()
-			chunk._generate_chunk(noise, noise_offset)
-			noise_offset += chunk.size
+			noise_offset = Vector2(x * chunk_size.x, chunk_size.y * y)
 			chunk.position = Vector2(chunk_size.x * xoff, chunk_size.y * yoff)
+			chunk._generate_chunk(noise, noise_offset)
 			add_child(chunk)
 			chunks[Vector2(xoff, yoff)] = chunk
 			yoff += 1
@@ -46,4 +51,3 @@ func _generate_start(noise: FastNoiseLite) -> void:
 			chunk.right_neigh = cright
 			chunk.diag_neigh = cdig
 			chunk._generate_shape()
-		xoff += 1

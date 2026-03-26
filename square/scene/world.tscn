@@ -5,8 +5,9 @@
 
 [node name="World" type="Node2D" unique_id=1743026920]
 script = ExtResource("1_pjass")
-chunk_size = Vector2(256, 256)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1636632716]
 zoom = Vector2(0.5, 0.5)
 script = ExtResource("2_txmk2")
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=844920927]
